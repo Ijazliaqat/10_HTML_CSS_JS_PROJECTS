@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>10 · Stats Counter Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-white p-6 md:p-12">
+    <header class="max-w-5xl mx-auto mb-10">
+      <h1 class="text-3xl md:text-4xl font-extrabold">Dashboard</h1>
+      <p class="text-slate-400 mt-1">Numbers count up and bars grow on load.</p>
+    </header>
+
+    <!-- STAT CARDS. data-target = the number to count up to -->
+    <section
+      class="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10"
+    >
+      <div data-card class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <p class="text-slate-400 text-sm">Total Users</p>
+        <p
+          class="stat text-4xl font-bold mt-2"
+          data-target="12480"
+          data-suffix=""
+        >
+          0
+        </p>
+      </div>
+      <div data-card class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <p class="text-slate-400 text-sm">Revenue</p>
+        <p
+          class="stat text-4xl font-bold mt-2"
+          data-target="94"
+          data-prefix="$"
+          data-suffix="k"
+        >
+          0
+        </p>
+      </div>
+      <div data-card class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <p class="text-slate-400 text-sm">Active Now</p>
+        <p
+          class="stat text-4xl font-bold mt-2"
+          data-target="327"
+          data-suffix=""
+        >
+          0
+        </p>
+      </div>
+      <div data-card class="bg-white/5 border border-white/10 rounded-2xl p-6">
+        <p class="text-slate-400 text-sm">Satisfaction</p>
+        <p
+          class="stat text-4xl font-bold mt-2"
+          data-target="98"
+          data-suffix="%"
+        >
+          0
+        </p>
+      </div>
+    </section>
+
+    <!-- BAR CHART. data-value = height % of each bar -->
+    <section
+      class="max-w-5xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6"
+    >
+      <h2 class="font-semibold mb-6">Weekly activity</h2>
+      <div class="flex items-end justify-between gap-3 h-52">
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="40"
+        ></div>
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="65"
+        ></div>
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="50"
+        ></div>
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="80"
+        ></div>
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="60"
+        ></div>
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="95"
+        ></div>
+        <div
+          class="bar w-full bg-gradient-to-t from-indigo-500 to-fuchsia-500 rounded-t-lg"
+          data-value="75"
+        ></div>
+      </div>
+      <div class="flex justify-between text-xs text-slate-500 mt-3">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span
+        ><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+    </section>
+    <script>
+      // ===== 10 · Stats Counter Dashboard =====
+
+      // cards fade/slide in
+      gsap.from("[data-card]", {
+        y: 30,
+        opacity: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power3.out",
+      });
+
+      // ---- NUMBER COUNT-UP ----
+      document.querySelectorAll(".stat").forEach((el) => {
+        const target = +el.dataset.target;
+        const prefix = el.dataset.prefix || "";
+        const suffix = el.dataset.suffix || "";
+        const counter = { val: 0 };
+
+        gsap.to(counter, {
+          val: target,
+          duration: 2,
+          ease: "power2.out",
+          delay: 0.3,
+          onUpdate: () => {
+            // toLocaleString adds the commas -> 12,480
+            el.textContent =
+              prefix + Math.floor(counter.val).toLocaleString() + suffix;
+          },
+        });
+      });
+
+      // ---- BARS GROW FROM THE BOTTOM ----
+      document.querySelectorAll(".bar").forEach((bar, i) => {
+        gsap.fromTo(
+          bar,
+          { height: "0%" },
+          {
+            height: bar.dataset.value + "%",
+            duration: 1,
+            ease: "power3.out",
+            delay: 0.5 + i * 0.08,
+          },
+        );
+      });
+
+      // TODO: wrap the count-up in a ScrollTrigger so it only fires when scrolled into view.
+      // Add the ScrollTrigger CDN, then:
+      //.  gsap.registerPlugin(ScrollTrigger);
+      //.  ScrollTrigger.create({ trigger: el, start: "top 80%", once: true, onEnter: () => { ...count up... } });
+
+    </script>
+  </body>
+</html>

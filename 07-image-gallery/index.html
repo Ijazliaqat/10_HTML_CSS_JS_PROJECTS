@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>07 · Image Gallery + Lightbox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900 p-6 md:p-12">
+    <header class="max-w-5xl mx-auto text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-extrabold">Photo Gallery</h1>
+      <p class="text-slate-500 mt-2">
+        Filter by category, click any image to zoom.
+      </p>
+
+      <!-- filter buttons. data-filter matches the data-cat on each image -->
+      <div class="flex flex-wrap gap-2 justify-center mt-6">
+        <button
+          data-filter="all"
+          class="filter-btn is-active px-4 py-2 rounded-full text-sm font-medium"
+        >
+          All
+        </button>
+        <button
+          data-filter="nature"
+          class="filter-btn px-4 py-2 rounded-full text-sm font-medium"
+        >
+          Nature
+        </button>
+        <button
+          data-filter="city"
+          class="filter-btn px-4 py-2 rounded-full text-sm font-medium"
+        >
+          City
+        </button>
+        <button
+          data-filter="food"
+          class="filter-btn px-4 py-2 rounded-full text-sm font-medium"
+        >
+          Food
+        </button>
+      </div>
+    </header>
+
+    <!-- grid -->
+    <div
+      id="grid"
+      class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-4"
+    >
+      <!-- 9 items; swap the seeds/categories for your own photos -->
+      <img
+        data-item
+        data-cat="nature"
+        src="https://picsum.photos/seed/n1/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="city"
+        src="https://picsum.photos/seed/c1/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="food"
+        src="https://picsum.photos/seed/f1/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="nature"
+        src="https://picsum.photos/seed/n2/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="food"
+        src="https://picsum.photos/seed/f2/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="city"
+        src="https://picsum.photos/seed/c2/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="nature"
+        src="https://picsum.photos/seed/n3/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="city"
+        src="https://picsum.photos/seed/c3/500/500"
+        class="gallery-img"
+      />
+      <img
+        data-item
+        data-cat="food"
+        src="https://picsum.photos/seed/f3/500/500"
+        class="gallery-img"
+      />
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div
+      id="lightbox"
+      class="fixed inset-0 bg-black/80 hidden items-center justify-center p-6 z-50"
+    >
+      <button
+        id="closeLightbox"
+        class="absolute top-5 right-6 text-white text-4xl"
+      >
+        &times;
+      </button>
+      <img
+        id="lightboxImg"
+        src=""
+        class="max-h-[85vh] max-w-full rounded-xl shadow-2xl"
+      />
+    </div>
+
+    <!-- type="text/tailwindcss" lets the Play CDN understand @apply -->
+    <style type="text/tailwindcss">
+      .gallery-img {
+        @apply aspect-square object-cover rounded-xl cursor-pointer shadow-sm;
+      }
+      .filter-btn {
+        @apply bg-white text-slate-600 shadow-sm transition;
+      }
+      .filter-btn.is-active {
+        @apply bg-indigo-500 text-white;
+      }
+    </style>
+    <script>
+      // ===== 07 · Image Gallery + Lightbox =====
+
+      const items = document.querySelectorAll("[data-item]");
+      const filterBtns = document.querySelectorAll(".filter-btn");
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightboxImg");
+      const closeBtn = document.getElementById("closeLightbox");
+
+      // entrance stagger
+      gsap.from(items, {
+        y: 30,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.06,
+        ease: "power2.out",
+      });
+
+      // ---- FILTERING ----
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // update the active button style
+          filterBtns.forEach((b) => b.classList.remove("is-active"));
+          btn.classList.add("is-active");
+
+          const filter = btn.dataset.filter;
+
+          items.forEach((img) => {
+            const show = filter === "all" || img.dataset.cat === filter;
+            if (show) {
+              img.classList.remove("hidden");
+              gsap.fromTo(
+                img,
+                { scale: 0.8, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.4)" },
+              );
+            } else {
+              img.classList.add("hidden");
+            }
+          });
+        });
+      });
+
+      // ---- LIGHTBOX ----
+      items.forEach((img) => {
+        img.addEventListener("click", () => openLightbox(img.src));
+      });
+
+      function openLightbox(src) {
+        lightboxImg.src = src;
+        lightbox.classList.remove("hidden");
+        lightbox.classList.add("flex");
+        gsap.fromTo(lightbox, { opacity: 0 }, { opacity: 1, duration: 0.25 });
+        gsap.fromTo(
+          lightboxImg,
+          { scale: 0.7, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(1.5)" },
+        );
+      }
+
+      function closeLightbox() {
+        gsap.to(lightbox, {
+          opacity: 0,
+          duration: 0.2,
+          onComplete: () => {
+            lightbox.classList.add("hidden");
+            lightbox.classList.remove("flex");
+          },
+        });
+      }
+
+      closeBtn.addEventListener("click", closeLightbox);
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeLightbox();
+      });
+
+      // TODO: add ← / → arrow keys to move between images inside the lightbox
+    </script>
+  </body>
+</html>

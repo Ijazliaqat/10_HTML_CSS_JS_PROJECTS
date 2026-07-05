@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>05 · Toast Notifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body
+    class="min-h-screen bg-slate-900 text-white flex items-center justify-center p-6"
+  >
+    <main class="text-center">
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-2">
+        Toast Notifications
+      </h1>
+      <p class="text-slate-400 mb-10">
+        Click a button to trigger a toast. They stack and auto-dismiss.
+      </p>
+
+      <div class="flex flex-wrap gap-3 justify-center">
+        <!-- data-type is read by main.js to pick color/icon -->
+        <button
+          data-type="success"
+          class="toast-trigger bg-emerald-500 hover:bg-emerald-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Success
+        </button>
+        <button
+          data-type="error"
+          class="toast-trigger bg-rose-500 hover:bg-rose-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Error
+        </button>
+        <button
+          data-type="info"
+          class="toast-trigger bg-sky-500 hover:bg-sky-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Info
+        </button>
+        <button
+          data-type="warning"
+          class="toast-trigger bg-amber-500 hover:bg-amber-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Warning
+        </button>
+      </div>
+    </main>
+
+    <!-- toasts get injected here -->
+    <div
+      id="toastContainer"
+      class="fixed top-6 right-6 flex flex-col gap-3 w-80 z-50"
+    ></div>
+    <script>
+      // ===== 05 · Toast Notifications =====
+
+      const container = document.getElementById("toastContainer");
+
+      // styles + icon + message for each toast type
+      const TYPES = {
+        success: {
+          bg: "bg-emerald-500",
+          icon: "✓",
+          title: "Success!",
+          msg: "Your action was completed.",
+        },
+        error: {
+          bg: "bg-rose-500",
+          icon: "✕",
+          title: "Error",
+          msg: "Something went wrong.",
+        },
+        info: {
+          bg: "bg-sky-500",
+          icon: "ℹ",
+          title: "Heads up",
+          msg: "Here is some information.",
+        },
+        warning: {
+          bg: "bg-amber-500",
+          icon: "!",
+          title: "Warning",
+          msg: "Please double-check this.",
+        },
+      };
+
+      document.querySelectorAll(".toast-trigger").forEach((btn) => {
+        btn.addEventListener("click", () => showToast(btn.dataset.type));
+      });
+
+      function showToast(type) {
+        const t = TYPES[type] || TYPES.info;
+
+        // build the toast element
+        const toast = document.createElement("div");
+        toast.className = `${t.bg} text-white rounded-xl shadow-lg p-4 flex items-start gap-3 relative overflow-hidden`;
+        toast.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-white/25 flex items-center justify-center font-bold shrink-0">${t.icon}</div>
+        <div class="flex-1">
+          <p class="font-semibold">${t.title}</p>
+          <p class="text-sm text-white/90">${t.msg}</p>
+        </div>
+        <button class="text-white/70 hover:text-white text-lg leading-none">&times;</button>
+        <div class="absolute bottom-0 left-0 h-1 bg-white/40 progress"></div>
+      `;
+        container.appendChild(toast);
+
+        // slide in from the right
+        gsap.from(toast, {
+          x: 350,
+          opacity: 0,
+          duration: 0.4,
+          ease: "back.out(1.4)",
+        });
+
+        // shrinking progress bar = time left before auto-dismiss (4s)
+        gsap.fromTo(
+          toast.querySelector(".progress"),
+          { width: "100%" },
+          { width: "0%", duration: 4, ease: "none" },
+        );
+
+        const timer = setTimeout(() => dismiss(toast), 4000);
+
+        // close button cancels the timer
+        toast.querySelector("button").addEventListener("click", () => {
+          clearTimeout(timer);
+          dismiss(toast);
+        });
+      }
+
+      function dismiss(toast) {
+        gsap.to(toast, {
+          x: 350,
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.in",
+          onComplete: () => toast.remove(),
+        });
+      }
+
+      // TODO: add a showToast("success", "Custom message") overload for your own text
+    </script>
+  </body>
+</html>

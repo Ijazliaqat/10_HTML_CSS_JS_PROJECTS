@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>02 · Music Player UI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-900 via-slate-900 to-slate-950 text-white flex items-center justify-center p-6">
+
+  <div id="player" class="w-full max-w-sm bg-white/5 backdrop-blur border border-white/10 rounded-3xl p-6 shadow-2xl">
+
+    <!-- album art -->
+    <div class="relative">
+      <img id="art"
+        src="https://picsum.photos/seed/lofi/400/400"
+        alt="Album art"
+        class="w-full aspect-square object-cover rounded-2xl shadow-lg" />
+      <!-- equalizer bars overlay (animated when playing) -->
+      <div id="eq" class="absolute bottom-3 left-3 flex items-end gap-1 h-8">
+        <span class="w-1.5 bg-fuchsia-400 rounded-full" style="height:40%"></span>
+        <span class="w-1.5 bg-fuchsia-400 rounded-full" style="height:80%"></span>
+        <span class="w-1.5 bg-fuchsia-400 rounded-full" style="height:55%"></span>
+        <span class="w-1.5 bg-fuchsia-400 rounded-full" style="height:95%"></span>
+      </div>
+    </div>
+
+    <!-- track info -->
+    <div class="mt-5 text-center">
+      <h2 class="text-xl font-bold">Midnight Drive</h2>
+      <p class="text-slate-400 text-sm">Lofi Dreams</p>
+    </div>
+
+    <!-- progress bar -->
+    <div class="mt-5">
+      <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+        <div id="progress" class="h-full w-0 bg-gradient-to-r from-fuchsia-400 to-purple-400 rounded-full"></div>
+      </div>
+      <div class="flex justify-between text-xs text-slate-400 mt-2">
+        <span id="current">0:00</span>
+        <span>3:24</span>
+      </div>
+    </div>
+
+    <!-- controls -->
+    <div class="mt-6 flex items-center justify-center gap-8">
+      <button class="text-slate-300 hover:text-white transition text-2xl">⏮</button>
+      <button id="playBtn"
+        class="w-16 h-16 rounded-full bg-fuchsia-500 hover:bg-fuchsia-400 transition flex items-center justify-center text-2xl shadow-lg shadow-fuchsia-500/40">
+        <span id="playIcon">▶</span>
+      </button>
+      <button class="text-slate-300 hover:text-white transition text-2xl">⏭</button>
+    </div>
+  </div>
+  <script>
+    // ===== 02 · Music Player UI =====
+    // This is a UI-only demo (no real audio). It fakes progress so you can focus on animation.
+    // TODO: hook up a real <audio> element to make it play actual music.
+
+    const playBtn = document.getElementById("playBtn");
+    const playIcon = document.getElementById("playIcon");
+    const art = document.getElementById("art");
+    const progress = document.getElementById("progress");
+    const current = document.getElementById("current");
+    const eqBars = document.querySelectorAll("#eq span");
+
+    let playing = false;
+
+    // entrance
+    gsap.from("#player", { y: 40, opacity: 0, scale: 0.95, duration: 0.7, ease: "power3.out" });
+
+    // slow rotating album art (paused until you press play)
+    const spin = gsap.to(art, { rotation: 360, duration: 12, ease: "none", repeat: -1, paused: true });
+
+    // equalizer bars bouncing (paused until play)
+    const eq = gsap.to(eqBars, {
+      scaleY: () => 0.3 + Math.random() * 0.7,
+      transformOrigin: "bottom",
+      duration: 0.4,
+      repeat: -1,
+      yoyo: true,
+      stagger: { each: 0.1, repeat: -1 },
+      paused: true,
+    });
+
+    // fake progress bar timeline (0% -> 100% over ~30s)
+    let fakeSeconds = 0;
+    const progressTl = gsap.to(progress, {
+      width: "100%",
+      duration: 30,
+      ease: "none",
+      paused: true,
+      onUpdate: () => {
+        fakeSeconds = Math.floor(progressTl.progress() * 204); // 3:24 = 204s
+        const m = Math.floor(fakeSeconds / 60);
+        const s = String(fakeSeconds % 60).padStart(2, "0");
+        current.textContent = `${m}:${s}`;
+      },
+    });
+
+    function togglePlay() {
+      playing = !playing;
+
+      // morph the icon with a quick pop
+      gsap.fromTo(playIcon, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.25 });
+      playIcon.textContent = playing ? "❚❚" : "▶";
+
+      if (playing) {
+        spin.play();
+        eq.play();
+        progressTl.play();
+      } else {
+        spin.pause();
+        eq.pause();
+        progressTl.pause();
+      }
+    }
+
+    playBtn.addEventListener("click", togglePlay);
+  </script>
+</body>
+</html>

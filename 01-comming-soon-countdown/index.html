@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Launching Soon · Nova</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ["Space Grotesk", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <style>
+      body {
+        background: #050510;
+        cursor: none;
+      }
+      .aurora {
+        filter: blur(80px);
+        opacity: 0.55;
+        mix-blend-mode: screen;
+      }
+
+      .grain::after {
+        content: "";
+        position: fixed;
+        inset: -150%;
+        pointer-events: none;
+        opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        animation: grain 0.6s steps(4) infinite;
+      }
+      @keyframes grain {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        25% {
+          transform: translate(-3%, 2%);
+        }
+        50% {
+          transform: translate(2%, -3%);
+        }
+        75% {
+          transform: translate(-2%, -2%);
+        }
+      }
+
+      .grid-bg {
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.035) 1px,
+            transparent 1px
+          );
+        background-size: 46px 46px;
+        mask-image: radial-gradient(circle at 50% 42%, black, transparent 72%);
+        -webkit-mask-image: radial-gradient(
+          circle at 50% 42%,
+          black,
+          transparent 72%
+        );
+      }
+      .grad {
+        background: linear-gradient(
+          120deg,
+          #a78bfa 0%,
+          #f0abfc 45%,
+          #22d3ee 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        background-size: 200% 200%;
+      }
+      .magnetic {
+        will-change: transform;
+      }
+      @media (hover: none) {
+        body {
+          cursor: auto;
+        }
+        .cursor {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="grain relative min-h-screen overflow-hidden font-display text-white antialiased selection:bg-fuchsia-500/30"
+  >
+    <!-- Aurora + grid + stars -->
+    <div class="fixed inset-0 pointer-events-none">
+      <div
+        data-depth="0.03"
+        class="aurora absolute -top-40 -left-32 w-[38rem] h-[38rem] rounded-full bg-indigo-600"
+      ></div>
+      <div
+        data-depth="0.05"
+        class="aurora absolute top-1/3 -right-32 w-[34rem] h-[34rem] rounded-full bg-fuchsia-600"
+      ></div>
+      <div
+        data-depth="0.04"
+        class="aurora absolute -bottom-40 left-1/3 w-[32rem] h-[32rem] rounded-full bg-cyan-500"
+      ></div>
+    </div>
+    <div class="fixed inset-0 grid-bg pointer-events-none"></div>
+    <div
+      id="stars"
+      data-depth="0.02"
+      class="fixed inset-0 pointer-events-none"
+    ></div>
+
+    <!-- Custom cursor -->
+    <div class="cursor fixed z-50 pointer-events-none">
+      <div
+        id="cursorDot"
+        class="fixed top-0 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+      ></div>
+      <div
+        id="cursorRing"
+        class="fixed top-0 left-0 w-10 h-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/40"
+      ></div>
+    </div>
+
+    <!-- Top bar -->
+    <header
+      class="relative z-10 flex items-center justify-between px-6 md:px-12 py-6"
+    >
+      <div data-in class="flex items-center gap-3 font-semibold tracking-tight">
+        <span
+          class="grid place-items-center w-9 h-9 rounded-xl bg-white text-slate-900 font-bold"
+          >N</span
+        >
+        Nova
+      </div>
+      <div
+        data-in
+        class="hidden sm:flex items-center gap-2 font-mono text-xs tracking-widest text-white/50"
+      >
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        STATUS · BUILDING
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main
+      class="relative z-10 flex flex-col items-center text-center px-6"
+      style="min-height: calc(100vh - 88px)"
+    >
+      <div class="flex-1 flex flex-col items-center justify-center">
+        <span
+          data-in
+          class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur px-4 py-1.5 font-mono text-[11px] tracking-widest text-white/70 uppercase mb-8"
+        >
+          <span class="w-1.5 h-1.5 rounded-full bg-fuchsia-400"></span>
+          Something big is coming
+        </span>
+
+        <h1
+          class="font-bold leading-[1.05] tracking-tight text-4xl sm:text-6xl md:text-7xl max-w-4xl"
+        >
+          <span data-line class="block">We're crafting the</span>
+          <span data-line class="block grad">future of design.</span>
+        </h1>
+
+        <p data-in class="mt-6 max-w-lg text-white/60 leading-relaxed">
+          A new way to build beautiful, animated interfaces is almost here. Be
+          the first to know when we launch.
+        </p>
+
+        <!-- Countdown -->
+        <div
+          id="countdown"
+          class="mt-12 flex items-stretch justify-center gap-3 md:gap-5"
+        >
+          <div
+            data-box
+            class="group relative w-20 md:w-28 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl py-5 md:py-6 overflow-hidden"
+          >
+            <div
+              class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            ></div>
+            <div
+              id="days"
+              class="grad font-bold tabular-nums text-4xl md:text-6xl"
+            >
+              00
+            </div>
+            <div
+              class="mt-2 font-mono text-[10px] md:text-xs tracking-[0.25em] text-white/40 uppercase"
+            >
+              Days
+            </div>
+          </div>
+          <div
+            data-box
+            class="group relative w-20 md:w-28 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl py-5 md:py-6 overflow-hidden"
+          >
+            <div
+              class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            ></div>
+            <div
+              id="hours"
+              class="grad font-bold tabular-nums text-4xl md:text-6xl"
+            >
+              00
+            </div>
+            <div
+              class="mt-2 font-mono text-[10px] md:text-xs tracking-[0.25em] text-white/40 uppercase"
+            >
+              Hours
+            </div>
+          </div>
+          <div
+            data-box
+            class="group relative w-20 md:w-28 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl py-5 md:py-6 overflow-hidden"
+          >
+            <div
+              class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            ></div>
+            <div
+              id="minutes"
+              class="grad font-bold tabular-nums text-4xl md:text-6xl"
+            >
+              00
+            </div>
+            <div
+              class="mt-2 font-mono text-[10px] md:text-xs tracking-[0.25em] text-white/40 uppercase"
+            >
+              Minutes
+            </div>
+          </div>
+          <div
+            data-box
+            class="group relative w-20 md:w-28 rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl py-5 md:py-6 overflow-hidden"
+          >
+            <div
+              class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            ></div>
+            <div
+              id="seconds"
+              class="grad font-bold tabular-nums text-4xl md:text-6xl"
+            >
+              00
+            </div>
+            <div
+              class="mt-2 font-mono text-[10px] md:text-xs tracking-[0.25em] text-white/40 uppercase"
+            >
+              Seconds
+            </div>
+          </div>
+        </div>
+
+        <!-- Signup -->
+        <form data-in id="notifyForm" novalidate class="mt-12 w-full max-w-md">
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  viewBox="0 0 24 24"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="m3 7 9 6 9-6" />
+                </svg>
+              </span>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                class="w-full rounded-full bg-white/[0.04] border border-white/10 pl-11 pr-4 py-3.5 outline-none focus:border-violet-400/60 transition placeholder:text-white/35"
+              />
+            </div>
+            <button
+              type="submit"
+              id="notifyBtn"
+              class="magnetic group relative overflow-hidden rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-violet-500 px-7 py-3.5 font-semibold shadow-lg shadow-fuchsia-500/25 whitespace-nowrap"
+            >
+              <span
+                id="notifyLabel"
+                class="relative z-10 flex items-center gap-2"
+                >Notify me
+                <svg
+                  class="w-4 h-4 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </button>
+          </div>
+          <p id="formMsg" class="mt-3 text-sm text-white/50 h-5"></p>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <footer class="w-full max-w-md pb-8">
+        <div
+          data-in
+          class="flex items-center justify-center gap-5 text-white/40"
+        >
+          <a href="#" class="hover:text-white transition"
+            ><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M22 4.01c-.8.36-1.67.6-2.58.71a4.5 4.5 0 0 0 1.97-2.48 9 9 0 0 1-2.85 1.09 4.48 4.48 0 0 0-7.64 4.09A12.72 12.72 0 0 1 1.64 2.9a4.48 4.48 0 0 0 1.39 5.98c-.7-.02-1.36-.21-1.94-.53v.05a4.48 4.48 0 0 0 3.6 4.4c-.64.17-1.32.2-1.97.07a4.48 4.48 0 0 0 4.19 3.11A9 9 0 0 1 1 18.06 12.7 12.7 0 0 0 7.88 20c8.26 0 12.78-6.84 12.78-12.78l-.01-.58A9.1 9.1 0 0 0 22 4.01z"
+              /></svg
+          ></a>
+          <a href="#" class="hover:text-white transition"
+            ><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49l-.01-1.9c-2.78.62-3.37-1.2-3.37-1.2-.46-1.18-1.11-1.5-1.11-1.5-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.9 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.79-4.57 5.04.36.32.68.94.68 1.9l-.01 2.82c0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"
+              /></svg
+          ></a>
+          <a href="#" class="hover:text-white transition"
+            ><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.2.8 24 1.77 24h20.45c.98 0 1.78-.8 1.78-1.75V1.75C24 .78 23.2 0 22.22 0z"
+              /></svg
+          ></a>
+        </div>
+        <p
+          data-in
+          class="mt-4 text-center font-mono text-[11px] tracking-widest text-white/25"
+        >
+          © 2026 NOVA · ALL RIGHTS RESERVED
+        </p>
+      </footer>
+    </main>
+    <script>
+      // ===== 01 · Award-style Coming Soon =====
+      const prefersReduced = matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      /* Starfield */
+      const stars = document.getElementById("stars");
+      for (let i = 0; i < 80; i++) {
+        const s = document.createElement("span");
+        const size = Math.random() * 2 + 0.5;
+        s.className = "absolute rounded-full bg-white";
+        s.style.width = s.style.height = size + "px";
+        s.style.left = Math.random() * 100 + "%";
+        s.style.top = Math.random() * 100 + "%";
+        s.style.opacity = Math.random() * 0.7 + 0.1;
+        stars.appendChild(s);
+        gsap.to(s, {
+          opacity: 0.05,
+          duration: 1 + Math.random() * 2.5,
+          repeat: -1,
+          yoyo: true,
+          delay: Math.random() * 3,
+        });
+      }
+
+      /* Aurora drift + gradient sweep */
+      gsap.utils
+        .toArray(".aurora")
+        .forEach((el, i) =>
+          gsap.to(el, {
+            x: "+=55",
+            y: "+=35",
+            scale: 1.14,
+            duration: 8 + i * 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          }),
+        );
+      gsap.to(".grad", {
+        backgroundPosition: "200% 50%",
+        duration: 6,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      /* Entrance */
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      tl.from("[data-line]", {
+        yPercent: 110,
+        opacity: 0,
+        stagger: 0.12,
+        duration: 1,
+      })
+        .from(
+          "[data-box]",
+          {
+            y: 40,
+            opacity: 0,
+            scale: 0.9,
+            stagger: 0.1,
+            duration: 0.7,
+            ease: "back.out(1.5)",
+          },
+          "-=0.5",
+        )
+        .from(
+          "[data-in]",
+          { y: 20, opacity: 0, stagger: 0.06, duration: 0.6 },
+          "-=0.8",
+        );
+
+      /* Parallax + custom cursor */
+      const layers = gsap.utils.toArray("[data-depth]").map((el) => ({
+        d: parseFloat(el.dataset.depth),
+        x: gsap.quickTo(el, "x", { duration: 0.9, ease: "power3" }),
+        y: gsap.quickTo(el, "y", { duration: 0.9, ease: "power3" }),
+      }));
+      const dotX = gsap.quickTo("#cursorDot", "x", { duration: 0.12 }),
+        dotY = gsap.quickTo("#cursorDot", "y", { duration: 0.12 });
+      const ringX = gsap.quickTo("#cursorRing", "x", {
+          duration: 0.45,
+          ease: "power3",
+      }),
+        ringY = gsap.quickTo("#cursorRing", "y", {
+          duration: 0.45,
+          ease: "power3",
+        });
+      if (!prefersReduced) {
+        addEventListener("mousemove", (e) => {
+          dotX(e.clientX);
+          dotY(e.clientY);
+          ringX(e.clientX);
+          ringY(e.clientY);
+          const nx = e.clientX / innerWidth - 0.5,
+            ny = e.clientY / innerHeight - 0.5;
+          layers.forEach((l) => {
+            l.x(-nx * l.d * 600);
+            l.y(-ny * l.d * 600);
+          });
+        });
+      }
+
+      /* Magnetic button + cursor grow on interactive hover */
+      document.querySelectorAll(".magnetic, a, button").forEach((el) => {
+        el.addEventListener("mouseenter", () =>
+          gsap.to("#cursorRing", { scale: 1.8, duration: 0.3 }),
+        );
+        el.addEventListener("mouseleave", () =>
+          gsap.to("#cursorRing", { scale: 1, duration: 0.3 }),
+        );
+      });
+      const btn = document.getElementById("notifyBtn");
+      btn.addEventListener("mousemove", (e) => {
+        const r = btn.getBoundingClientRect();
+        gsap.to(btn, {
+          x: (e.clientX - (r.left + r.width / 2)) * 0.25,
+          y: (e.clientY - (r.top + r.height / 2)) * 0.35,
+          duration: 0.4,
+        });
+      });
+      btn.addEventListener("mouseleave", () =>
+        gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1,0.4)" }),
+      );
+
+      /* ---------- Countdown ---------- */
+      // TODO: set your real launch date here
+      const LAUNCH = new Date("2026-12-31T00:00:00").getTime();
+      const els = {
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+      };
+      const pad = (n) => String(n).padStart(2, "0");
+
+      function set(el, val) {
+        if (el.textContent === val) return;
+        el.textContent = val;
+        gsap.fromTo(
+          el,
+          { yPercent: -60, opacity: 0 },
+          { yPercent: 0, opacity: 1, duration: 0.4, ease: "back.out(2)" },
+        );
+      }
+      function tick() {
+        let diff = LAUNCH - Date.now();
+        if (diff <= 0) {
+          diff = 0;
+          clearInterval(timer);
+        }
+        set(els.days, pad(Math.floor(diff / 864e5)));
+        set(els.hours, pad(Math.floor(diff / 36e5) % 24));
+        set(els.minutes, pad(Math.floor(diff / 6e4) % 60));
+        set(els.seconds, pad(Math.floor(diff / 1e3) % 60));
+      }
+      tick();
+      const timer = setInterval(tick, 1000);
+
+      /* ---------- Notify form ---------- */
+      const form = document.getElementById("notifyForm");
+      const email = document.getElementById("email");
+      const msg = document.getElementById("formMsg");
+      const label = document.getElementById("notifyLabel");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+        if (!ok) {
+          msg.textContent = "Please enter a valid email address.";
+          msg.className = "mt-3 text-sm text-rose-400 h-5";
+          gsap.fromTo(
+            email,
+            { x: -8 },
+            {
+              x: 8,
+              duration: 0.07,
+              repeat: 5,
+              yoyo: true,
+              ease: "power1.inOut",
+              clearProps: "x",
+            },
+          );
+          return;
+        }
+        label.innerHTML = "You're on the list ✓";
+        email.value = "";
+        email.disabled = true;
+        msg.textContent = "Thanks! We'll email you the moment we launch.";
+        msg.className = "mt-3 text-sm text-emerald-400 h-5";
+        gsap.fromTo(
+          btn,
+          { scale: 0.95 },
+          { scale: 1, duration: 0.4, ease: "back.out(2)" },
+        );
+        // confetti-ish pop on the button
+        gsap.fromTo(
+          btn,
+          { boxShadow: "0 0 0 0 rgba(217,70,239,0.5)" },
+          { boxShadow: "0 0 0 24px rgba(217,70,239,0)", duration: 0.8 },
+        );
+      });
+    </script>
+  </body>
+</html>
