@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>05 · Toast Notifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  </head>
+  <body
+    class="min-h-screen bg-slate-900 text-white flex items-center justify-center p-6"
+  >
+    <main class="text-center">
+      <h1 class="text-3xl md:text-4xl font-extrabold mb-2">
+        Toast Notifications
+      </h1>
+      <p class="text-slate-400 mb-10">
+        Click a button to trigger a toast. They stack and auto-dismiss.
+      </p>
+
+      <div class="flex flex-wrap gap-3 justify-center">
+        <!-- data-type is read by main.js to pick color/icon -->
+        <button
+          data-type="success"
+          class="toast-trigger bg-emerald-500 hover:bg-emerald-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Success
+        </button>
+        <button
+          data-type="error"
+          class="toast-trigger bg-rose-500 hover:bg-rose-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Error
+        </button>
+        <button
+          data-type="info"
+          class="toast-trigger bg-sky-500 hover:bg-sky-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Info
+        </button>
+        <button
+          data-type="warning"
+          class="toast-trigger bg-amber-500 hover:bg-amber-400 transition px-5 py-3 rounded-xl font-semibold"
+        >
+          Warning
+        </button>
+      </div>
+    </main>
+
+    <!-- toasts get injected here -->
+    <div
+      id="toastContainer"
+      class="fixed top-6 right-6 flex flex-col gap-3 w-80 z-50"
+    ></div>
+    <script>
+    </script>
+  </body>
+</html>
